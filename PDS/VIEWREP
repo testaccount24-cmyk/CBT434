@@ -1,0 +1,40 @@
+/* REXX */
+/*                           */
+/* AUTHOR: MARK ZELDEN       */
+/*                           */
+/* TRACE ?R */
+Address ISREDIT
+"MACRO"
+ /* Address ISPEXEC "CONTROL ERRORS RETURN"  */
+/***************************************************************/
+/* Replace the member being viewed with the current            */
+/* contents of the editor or flat file if not a PDS.           */
+/***************************************************************/
+/* COMMAND SYNTAX:                                             */
+/*                                                             */
+/*   VIEWREP                                                   */
+/*                                                             */
+/***************************************************************/
+"(mbr) = MEMBER"
+"(dsn) = DATASET"
+/***********************************************/
+/*   BEGIN  PROCESSING                         */
+/***********************************************/
+"(lastln) = LINENUM .ZLAST"     /* last data line       */
+If MBR <> '' then "REPLACE" mbr "1" lastln
+  Else "REPLACE  '" || dsn || "' 1" lastln
+If MBR <> '' then do
+  zedsmsg = mbr 'REPLACED'
+  zedlmsg = 'MEMBER' mbr 'WAS REPLACED',
+           'IN THIS LIBRARY USING THE CURRENT EDITOR CONTENTS'
+End
+Else do
+  zedsmsg = 'DATA SET WAS REPLACED'
+  zedlmsg = dsn 'WAS REPLACED',
+           'USING THE CURRENT EDITOR CONTENTS'
+End
+Address ISPEXEC "SETMSG MSG(ISRZ000)"
+/***********************************************/
+/*   END  PROCESSING                           */
+/***********************************************/
+Exit 0
