@@ -1,0 +1,42 @@
+/* REXX */
+/*                           */
+/* AUTHOR: MARK ZELDEN       */
+/*                           */
+/* TRACE ?R */
+Address ISREDIT
+"MACRO (mbr)"
+ /* Address ISPEXEC "CONTROL ERRORS RETURN"  */
+/***************************************************************/
+/*                                                             */
+/* THIS EDIT MACRO WILL CREATE/REPLACE A MEMBER IN THE CURRENT */
+/* PDS WITH THE MEMBER CURRENTLY IN EDIT/VIEW, then EDIT the   */
+/* MEMBER.                                                     */
+/***************************************************************/
+/* COMMAND SYNTAX:                                             */
+/*                                                             */
+/*   CRPL mbrname                                              */
+/*                                                             */
+/***************************************************************/
+If mbr = '' then do
+  zedsmsg = 'NO MEMBER NAME SPECIFED'
+  zedlmsg = 'MEMBER NAME MUST BE SPECIFIED',
+            'AS A PARMAETER. EXAMPLE:  CRPL mbrname'
+  Address ISPEXEC "SETMSG MSG(ISRZ001)"  /* msg - with alarm */
+  Exit 12
+End
+mbr = Translate(mbr)
+/***********************************************/
+/*   BEGIN  PROCESSING                         */
+/***********************************************/
+"(lastln) = LINENUM .ZLAST"     /* last data line       */
+"REPLACE" mbr "1" lastln
+zedsmsg = mbr 'CREATED/REPLACED'
+zedlmsg = 'MEMBER' mbr 'WAS CREATED/REPLACED',
+         'IN THIS LIBRARY'
+Address ISPEXEC "SETMSG MSG(ISRZ000)"
+"EDIT   " mbr
+/***********************************************/
+/*   END  PROCESSING                           */
+/***********************************************/
+"CANCEL"  /* cancel out of mbr originally edited/viewed */
+Exit 0
